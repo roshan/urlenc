@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 func printdec(encodedValue string) {
@@ -22,11 +23,10 @@ func printenc(plainValue string) {
 func main() {
 	programName := os.Args[0]
 
-	for _, value := range os.Args[1:] {
-		if filepath.Base(programName) == "urldec" {
-			printdec(value)
-		} else {
-			printenc(value)
-		}
+	joined_input := strings.Join(os.Args[1:], " ")
+	if filepath.Base(programName) == "urldec" {
+		printdec(joined_input)
+	} else {
+		printenc(joined_input)
 	}
 }
