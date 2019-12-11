@@ -8,25 +8,40 @@ import (
 	"strings"
 )
 
-func printdec(encodedValue string) {
-	res, _ := url.ParseQuery(encodedValue)
-	for k := range res {
-		fmt.Println(k)
-	}
+const (
+	decode = "urldec"
+	encode = "urlenc"
+)
+
+func printDec(s string) string {
+	return mustUnescape(url.QueryUnescape(s))
 }
 
-func printenc(plainValue string) {
-	t := &url.URL{Path: plainValue}
-	fmt.Println(t.String())
+func printEnc(s string) string {
+	return url.QueryEscape(s)
+}
+
+func mustUnescape(s string, err error) string {
+	if err != nil {
+		panic(err)
+	}
+	return s
 }
 
 func main() {
-	programName := os.Args[0]
+	name := os.Args[0]
 
-	joined_input := strings.Join(os.Args[1:], " ")
-	if filepath.Base(programName) == "urldec" {
-		printdec(joined_input)
-	} else {
-		printenc(joined_input)
+	i := strings.Join(os.Args[1:], " ")
+
+	var fn func(i string) string
+	switch filepath.Base(name) {
+	case encode:
+		fn = printEnc
+	case decode:
+		fn = printDec
+	default:
+		panic("unknown program type")
 	}
+
+	fmt.Println(fn(i))
 }
